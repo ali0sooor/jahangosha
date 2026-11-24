@@ -1,0 +1,46 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.arisar.jahangosha'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.arisar.jahangosha"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    flavorDimensions "mode"
+    productFlavors {
+        // نسخه عادی بازی
+        normal {
+            dimension "mode"
+        }
+        // نسخه تستی (طلا و نیروی انسانی بی‌نهایت) - کنار نسخه عادی نصب می‌شود
+        cheat {
+            dimension "mode"
+            applicationIdSuffix ".cheat"
+            versionNameSuffix "-test"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    // تبلیغ پاداشی (AdMob)
+    implementation 'com.google.android.gms:play-services-ads:23.3.0'
+}
