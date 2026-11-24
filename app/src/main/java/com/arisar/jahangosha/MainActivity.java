@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
     private static final String GAME_URL = "file:///android_asset/game.html";
 
     // شناسه‌های ادیوری (تبلیغات یکتانت) - از پنل ناشرین ادیوری
-    private static final String ADIVERY_APP_ID = "defac452-1108-46ce-b770-b9017e0fea29";
-    private static final String ADIVERY_REWARDED_PLACEMENT = "d8017e86-9337-40af-b61f-c0068084a457";
+    private static final String ADIVERY_APP_ID = "0da1b26a-d0c0-4299-90c1-3c2261be4014";
+    private static final String ADIVERY_REWARDED_PLACEMENT = "jahangosha";
 
     private static final int REQ_FILE = 101;
     private static final int REQ_SAVE = 102;
