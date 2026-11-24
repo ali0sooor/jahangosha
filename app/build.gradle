@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.arisar.jahangosha'
+    namespace 'ir.arisar.jahangosha'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.arisar.jahangosha"
+        applicationId "ir.arisar.jahangosha"
         minSdk 26
         targetSdk 34
         versionCode 1
