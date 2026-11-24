@@ -22,13 +22,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+
+import com.adivery.sdk.Adivery;
+import com.adivery.sdk.AdiveryListener;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -37,17 +33,16 @@ public class MainActivity extends Activity {
 
     private static final String GAME_URL = "file:///android_asset/game.html";
 
-    // شناسه آزمایشی گوگل برای تبلیغ پاداشی. قبل از انتشار با شناسه واحد تبلیغاتی خودتان عوض کنید.
-    private static final String REWARDED_AD_UNIT = "ca-app-pub-3940256099942544/5224354917";
+    // شناسه‌های ادیوری (تبلیغات یکتانت) - از پنل ناشرین ادیوری
+    private static final String ADIVERY_APP_ID = "Jahangosha";
+    private static final String ADIVERY_REWARDED_PLACEMENT = "d8017e86-9337-40af-b61f-c0068084a457";
 
     private static final int REQ_FILE = 101;
     private static final int REQ_SAVE = 102;
 
     private WebView web;
 
-    private RewardedAd rewardedAd;
-    private boolean adLoading;
-    private boolean adEarned;
+    private String lastAdLog;
 
     private ValueCallback<Uri[]> fileCallback;
     private String pendingText;
@@ -112,7 +107,24 @@ public class MainActivity extends Activity {
         });
 
         goImmersive();
-        MobileAds.initialize(this, status -> loadAd());
+        Adivery.configure(getApplication(), ADIVERY_APP_ID);
+        Adivery.addPlacementListener(ADIVERY_REWARDED_PLACEMENT, new AdiveryListener() {
+            @Override
+            public void onRewardedAdLoaded(String placementId) {
+                lastAdLog = null;
+            }
+
+            @Override
+            public void onRewardedAdClosed(String placementId, boolean isRewarded) {
+                sendAdEvent(isRewarded ? "rewarded" : "closed");
+            }
+
+            @Override
+            public void log(String placementId, String message) {
+                lastAdLog = message;   // فقط برای نمایش علت خطا
+            }
+        });
+        Adivery.prepareRewardedAd(this, ADIVERY_REWARDED_PLACEMENT);
         web.loadUrl(GAME_URL);
     }
 
@@ -164,6 +176,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        Adivery.removePlacementListener(ADIVERY_REWARDED_PLACEMENT);
         if (web != null) {
             web.destroy();
             web = null;
@@ -240,48 +253,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void loadAd() {
-        if (rewardedAd != null || adLoading) return;
-        adLoading = true;
-        RewardedAd.load(this, REWARDED_AD_UNIT, new AdRequest.Builder().build(),
-                new RewardedAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(RewardedAd ad) {
-                        rewardedAd = ad;
-                        adLoading = false;
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError error) {
-                        rewardedAd = null;
-                        adLoading = false;
-                    }
-                });
-    }
-
     private void showRewardedAd() {
-        if (rewardedAd == null) {
-            loadAd();
-            sendAdEvent("notready");
+        if (Adivery.isLoaded(ADIVERY_REWARDED_PLACEMENT)) {
+            Adivery.showAd(ADIVERY_REWARDED_PLACEMENT);   // نتیجه از onRewardedAdClosed می‌آید
             return;
         }
-        final RewardedAd ad = rewardedAd;
-        rewardedAd = null;
-        adEarned = false;
-        ad.setFullScreenContentCallback(new FullScreenContentCallback() {
-            @Override
-            public void onAdDismissedFullScreenContent() {
-                sendAdEvent(adEarned ? "rewarded" : "closed");
-                loadAd();
-            }
-
-            @Override
-            public void onAdFailedToShowFullScreenContent(AdError error) {
-                sendAdEvent("notready");
-                loadAd();
-            }
-        });
-        ad.show(this, rewardItem -> adEarned = true);
+        String why = lastAdLog != null
+                ? "خطای تبلیغ: " + lastAdLog
+                : "تبلیغ هنوز آماده نیست؛ چند ثانیه بعد دوباره امتحان کن";
+        Toast.makeText(this, why, Toast.LENGTH_LONG).show();
+        Adivery.prepareRewardedAd(this, ADIVERY_REWARDED_PLACEMENT);
+        sendAdEvent("notready");
     }
 
     private void sendAdEvent(final String event) {

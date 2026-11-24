@@ -41,6 +41,6 @@ android {
 }
 
 dependencies {
-    // تبلیغ پاداشی (AdMob)
-    implementation 'com.google.android.gms:play-services-ads:23.3.0'
+    // تبلیغات ادیوری (یکتانت)
+    implementation 'com.adivery:sdk:4.10.0'
 }

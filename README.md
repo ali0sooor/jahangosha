@@ -17,11 +17,10 @@
 ## ساخت APK بدون Android Studio (GitHub Actions)
 پروژه را در یک مخزن GitHub بگذارید؛ در تب Actions گزینه «Build APK» را اجرا کنید و APKها را از Artifacts بردارید.
 
-## تبلیغات
-- بازی منطق تبلیغ پاداشی را دارد و برنامه آن را با AdMob وصل می‌کند.
-- الان شناسه‌های **آزمایشی** گوگل گذاشته شده‌اند. قبل از انتشار این دو را عوض کنید:
-  - `app/src/main/AndroidManifest.xml` ← مقدار `com.google.android.gms.ads.APPLICATION_ID`
-  - `MainActivity.java` ← ثابت `REWARDED_AD_UNIT`
+## تبلیغات (ادیوری / یکتانت)
+- تبلیغ ویدیویی جایزه‌دار با SDK ادیوری (`com.adivery:sdk`) نمایش داده می‌شود.
+- شناسه‌ها بالای `MainActivity.java` هستند: `ADIVERY_APP_ID` و `ADIVERY_REWARDED_PLACEMENT`.
+- ادیوری فقط برای پکیجی تبلیغ می‌دهد که در پنل ثبت شده باشد. نسخه `cheat` پکیج متفاوتی دارد (`.cheat` اضافه می‌شود)، پس برای تست تبلیغ از نسخه `normal` استفاده کنید.
 
 ## انتشار در گوگل‌پلی
 - از Build ← Generate Signed Bundle / APK با کلید امضای خودتان خروجی release (AAB) بگیرید.
