@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'ir.arisar.jahangosha'
+    namespace 'com.arisar.jahangosha'
     compileSdk 34
 
     defaultConfig {
